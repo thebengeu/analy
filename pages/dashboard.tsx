@@ -233,7 +233,10 @@ export default function Dashboard() {
         </table>
       </div>
       <h2 className="text-2xl my-4">Realtime Pageviews</h2>
-      {pageviews.length > 0 ? (
+      <div className="my-4">
+        Open pages in other tabs to see realtime pageviews.
+      </div>
+      {pageviews.length > 0 && (
         <table className="border table-auto">
           <thead>
             <tr>
@@ -258,8 +261,6 @@ export default function Dashboard() {
             ))}
           </tbody>
         </table>
-      ) : (
-        <div>Open pages in other tabs to see realtime pageviews.</div>
       )}
     </div>
   )
