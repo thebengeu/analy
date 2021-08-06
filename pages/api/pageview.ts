@@ -1,6 +1,8 @@
 // eslint-disable-next-line unicorn/prefer-node-protocol
 import fs from 'fs'
 // eslint-disable-next-line unicorn/prefer-node-protocol
+import { tmpdir } from 'os'
+// eslint-disable-next-line unicorn/prefer-node-protocol
 import process from 'process'
 
 import { createClient } from '@supabase/supabase-js'
@@ -12,7 +14,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import nc from 'next-connect'
 import { getClientIp } from 'request-ip'
 
-const lookupPromise = downloadDbs().then(async () =>
+const lookupPromise = downloadDbs(`${tmpdir()}/maxmind`).then(async () =>
   open('GeoLite2-Country', (path) => new Reader(fs.readFileSync(path)))
 )
 
