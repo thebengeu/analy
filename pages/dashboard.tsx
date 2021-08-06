@@ -233,30 +233,34 @@ export default function Dashboard() {
         </table>
       </div>
       <h2 className="text-2xl my-4">Realtime Pageviews</h2>
-      <table className="border table-auto">
-        <thead>
-          <tr>
-            <th className="border px-4 py-2">Timestamp</th>
-            <th className="border px-4 py-2">URL</th>
-            <th className="border px-4 py-2">Referrer</th>
-            <th className="border px-4 py-2">IP</th>
-            <th className="border px-4 py-2">User Agent</th>
-          </tr>
-        </thead>
-        <tbody>
-          {pageviews.map((pageview) => (
-            <tr key={pageview.id}>
-              <td className="border px-4 py-2">
-                {new Date(pageview.inserted_at).toUTCString()}
-              </td>
-              <td className="border px-4 py-2">{pageview.url}</td>
-              <td className="border px-4 py-2">{pageview.referrer}</td>
-              <td className="border px-4 py-2">{pageview.ip}</td>
-              <td className="border px-4 py-2">{pageview.user_agent}</td>
+      {pageviews.length > 0 ? (
+        <table className="border table-auto">
+          <thead>
+            <tr>
+              <th className="border px-4 py-2">Timestamp</th>
+              <th className="border px-4 py-2">URL</th>
+              <th className="border px-4 py-2">Referrer</th>
+              <th className="border px-4 py-2">IP</th>
+              <th className="border px-4 py-2">User Agent</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {pageviews.map((pageview) => (
+              <tr key={pageview.id}>
+                <td className="border px-4 py-2">
+                  {new Date(pageview.inserted_at).toUTCString()}
+                </td>
+                <td className="border px-4 py-2">{pageview.url}</td>
+                <td className="border px-4 py-2">{pageview.referrer}</td>
+                <td className="border px-4 py-2">{pageview.ip}</td>
+                <td className="border px-4 py-2">{pageview.user_agent}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      ) : (
+        <div>Open pages in other tabs to see realtime pageviews.</div>
+      )}
     </div>
   )
 }
