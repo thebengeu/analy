@@ -1,9 +1,13 @@
 import { createClient } from '@supabase/supabase-js'
+import moment from 'moment'
 import Head from 'next/head'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { Bar } from 'react-chartjs-2'
-import useFetch from 'use-http'
+
+import 'react-dates/initialize'
+import 'react-dates/lib/css/_datepicker.css'
+import { DayPickerRangeController } from 'react-dates'
 
 import 'chartjs-adapter-date-fns'
 
@@ -32,6 +36,16 @@ const chartOptions = {
 }
 
 export default function Dashboard() {
+  const [data, setData] = useState([])
+  const [startDate, setStartDate] = useState<moment.Moment | null>(
+    moment().startOf('day')
+  )
+  const [endDate, setEndDate] = useState<moment.Moment | null>(
+    moment().endOf('day')
+  )
+  const [focusedInput, setFocusedInput] = useState<
+    'startDate' | 'endDate' | null
+  >('startDate')
   const [pageviews, setPageviews] = useState<
     Array<{
       id: number
@@ -51,7 +65,6 @@ export default function Dashboard() {
   const [pageviewsOsCount, setPageviewsOsCount] = useState<
     Array<{ os: string; pageviews: number }>
   >([])
-  const { data = [] } = useFetch('/api/pageviews', {}, [])
 
   const chartData = {
     datasets: [
@@ -61,6 +74,21 @@ export default function Dashboard() {
       },
     ],
   }
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await fetch('/api/pageviews', {
+        method: 'POST',
+        body: JSON.stringify({
+          startTime: startDate?.startOf('day').toISOString(),
+          endTime: endDate?.endOf('day').toISOString(),
+        }),
+      })
+      setData(await response.json())
+    }
+
+    fetchData()
+  }, [startDate, endDate])
 
   useEffect(() => {
     const subscription = supabase
@@ -126,6 +154,24 @@ export default function Dashboard() {
         </li>
       </ul>
       <h1 className="text-3xl my-4">Dashboard</h1>
+      <DayPickerRangeController
+        startDate={startDate}
+        endDate={endDate}
+        onDatesChange={({ startDate, endDate }) => {
+          setStartDate(startDate)
+          setEndDate(endDate)
+        }}
+        focusedInput={focusedInput}
+        onFocusChange={(focusedInput) => {
+          setFocusedInput(focusedInput ? focusedInput : 'startDate')
+        }}
+        initialVisibleMonth={moment}
+        numberOfMonths={2}
+        minimumNights={0}
+      />
+      <div className="mt-4">
+        {startDate?.format('ll')} to {endDate?.format('ll')}
+      </div>
       <Bar data={chartData} options={chartOptions} />
       <div className="grid grid-cols-3 gap-4 my-4">
         <table className="border table-auto">
