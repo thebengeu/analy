@@ -104,36 +104,45 @@ export default function Dashboard() {
 
   useEffect(() => {
     const fetchPageviewsUrlCount = async () => {
-      const { data } = await supabase.rpc('pageviews_url_count')
+      const { data } = await supabase.rpc('pageviews_url_count', {
+        start_time: startDate?.startOf('day').toISOString(),
+        end_time: endDate?.endOf('day').toISOString(),
+      })
       if (data) {
         setPageviewsUrlCount(data)
       }
     }
 
     fetchPageviewsUrlCount()
-  }, [])
+  }, [startDate, endDate])
 
   useEffect(() => {
     const fetchPageviewsBrowserCount = async () => {
-      const { data } = await supabase.rpc('pageviews_browser_count')
+      const { data } = await supabase.rpc('pageviews_browser_count', {
+        start_time: startDate?.startOf('day').toISOString(),
+        end_time: endDate?.endOf('day').toISOString(),
+      })
       if (data) {
         setPageviewsBrowserCount(data)
       }
     }
 
     fetchPageviewsBrowserCount()
-  }, [])
+  }, [startDate, endDate])
 
   useEffect(() => {
     const fetchPageviewsOsCount = async () => {
-      const { data } = await supabase.rpc('pageviews_os_count')
+      const { data } = await supabase.rpc('pageviews_os_count', {
+        start_time: startDate?.startOf('day').toISOString(),
+        end_time: endDate?.endOf('day').toISOString(),
+      })
       if (data) {
         setPageviewsOsCount(data)
       }
     }
 
     fetchPageviewsOsCount()
-  }, [])
+  }, [startDate, endDate])
 
   return (
     <div className="container mx-auto">

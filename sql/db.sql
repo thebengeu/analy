@@ -9,7 +9,7 @@ CREATE TABLE pageviews (
   url text
 );
 
-CREATE FUNCTION pageviews_url_count ()
+CREATE FUNCTION pageviews_url_count (start_time text, end_time text)
   RETURNS TABLE (
     url text,
     pageviews bigint
@@ -20,6 +20,9 @@ CREATE FUNCTION pageviews_url_count ()
     COUNT(*)
   FROM
     pageviews
+  WHERE
+    inserted_at >= CAST(start_time AS timestamptz)
+    AND inserted_at < CAST(end_time AS timestamptz)
   GROUP BY
     1
   ORDER BY
@@ -28,42 +31,46 @@ $$
 LANGUAGE sql
 STABLE;
 
-
-CREATE FUNCTION pageviews_browser_count ()
-    RETURNS TABLE (
-        browser text,
-        pageviews bigint
-    )
-    AS $$
-    SELECT
-        browser,
-        COUNT(*)
-    FROM
-        pageviews
-    GROUP BY
-        1
-    ORDER BY
-        2 DESC
+CREATE FUNCTION pageviews_browser_count (start_time text, end_time text)
+  RETURNS TABLE (
+    browser text,
+    pageviews bigint
+  )
+  AS $$
+  SELECT
+    browser,
+    COUNT(*)
+  FROM
+    pageviews
+  WHERE
+    inserted_at >= CAST(start_time AS timestamptz)
+    AND inserted_at < CAST(end_time AS timestamptz)
+  GROUP BY
+    1
+  ORDER BY
+    2 DESC
 $$
 LANGUAGE sql
 STABLE;
 
-
-CREATE FUNCTION pageviews_os_count ()
-    RETURNS TABLE (
-        os text,
-        pageviews bigint
-    )
-    AS $$
-    SELECT
-        os,
-        COUNT(*)
-    FROM
-        pageviews
-    GROUP BY
-        1
-    ORDER BY
-        2 DESC
+CREATE FUNCTION pageviews_os_count (start_time text, end_time text)
+  RETURNS TABLE (
+    os text,
+    pageviews bigint
+  )
+  AS $$
+  SELECT
+    os,
+    COUNT(*)
+  FROM
+    pageviews
+  WHERE
+    inserted_at >= CAST(start_time AS timestamptz)
+    AND inserted_at < CAST(end_time AS timestamptz)
+  GROUP BY
+    1
+  ORDER BY
+    2 DESC
 $$
 LANGUAGE sql
 STABLE;
