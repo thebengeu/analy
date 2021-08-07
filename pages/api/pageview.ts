@@ -9,13 +9,16 @@ import { createClient } from '@supabase/supabase-js'
 import cors from 'cors'
 import { browserName, detectOS } from 'detect-browser'
 import { downloadDbs, open } from 'geolite2-redist'
-import { Reader } from 'maxmind'
+import { CountryResponse, Reader } from 'maxmind'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import nc from 'next-connect'
 import { getClientIp } from 'request-ip'
 
 const lookupPromise = downloadDbs(`${tmpdir()}/maxmind`).then(async () =>
-  open('GeoLite2-Country', (path) => new Reader(fs.readFileSync(path)))
+  open(
+    'GeoLite2-Country',
+    (path) => new Reader<CountryResponse>(fs.readFileSync(path))
+  )
 )
 
 if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
@@ -41,30 +44,25 @@ interface Request extends NextApiRequest {
 export default nc<Request, NextApiResponse>()
   .use(cors())
   .post(async (request, response) => {
-    console.log(request.body)
-
     const userAgent = request.headers['user-agent']
-    console.log(userAgent)
-
     let browser
     let os
     if (userAgent) {
       browser = browserName(userAgent)
-      console.log(browser)
       os = detectOS(userAgent)
-      console.log(os)
     }
 
     const clientIp = getClientIp(request)
-    console.log(clientIp)
-    const lookup = await lookupPromise
+    let country
     if (clientIp) {
-      console.log(lookup.get('66.6.44.4'))
+      const lookup = await lookupPromise
+      country = lookup.get(clientIp)?.country?.names.en
     }
 
     await supabase.from('pageviews').insert(
       {
         browser,
+        country,
         ip: clientIp,
         os,
         referrer: request.body.referrer,
