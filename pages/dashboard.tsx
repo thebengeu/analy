@@ -3,7 +3,7 @@ import moment from 'moment'
 import Head from 'next/head'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
-import { Bar } from 'react-chartjs-2'
+import { Bar } from 'test-react-chartjs-2'
 
 import 'react-dates/initialize'
 import 'react-dates/lib/css/_datepicker.css'
@@ -181,7 +181,7 @@ export default function Dashboard() {
       <div className="mt-4">
         {startDate?.format('ll')} to {endDate?.format('ll')}
       </div>
-      <Bar data={chartData} options={chartOptions} />
+      <Bar type="bar" data={chartData} options={chartOptions} />
       <div className="grid grid-cols-3 gap-4 my-4">
         <table className="border table-auto">
           <thead>
