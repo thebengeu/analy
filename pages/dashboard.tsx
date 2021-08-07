@@ -48,9 +48,9 @@ export default function Dashboard() {
   >('startDate')
   const [pageviews, setPageviews] = useState<
     Array<{
+      country: string
       id: number
       inserted_at: string
-      ip: string
       referrer: string
       url: string
       user_agent: string
@@ -278,7 +278,7 @@ export default function Dashboard() {
               <th className="border px-4 py-2">Timestamp</th>
               <th className="border px-4 py-2">URL</th>
               <th className="border px-4 py-2">Referrer</th>
-              <th className="border px-4 py-2">IP</th>
+              <th className="border px-4 py-2">Country</th>
               <th className="border px-4 py-2">User Agent</th>
             </tr>
           </thead>
@@ -290,7 +290,7 @@ export default function Dashboard() {
                 </td>
                 <td className="border px-4 py-2">{pageview.url}</td>
                 <td className="border px-4 py-2">{pageview.referrer}</td>
-                <td className="border px-4 py-2">{pageview.ip}</td>
+                <td className="border px-4 py-2">{pageview.country}</td>
                 <td className="border px-4 py-2">{pageview.user_agent}</td>
               </tr>
             ))}
