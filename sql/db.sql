@@ -75,3 +75,25 @@ CREATE FUNCTION pageviews_os_count (start_time text, end_time text)
 $$
 LANGUAGE sql
 STABLE;
+
+CREATE FUNCTION pageviews_country_count (start_time text, end_time text)
+  RETURNS TABLE (
+    country text,
+    pageviews bigint
+  )
+  AS $$
+  SELECT
+    country,
+    COUNT(*)
+  FROM
+    pageviews
+  WHERE
+    inserted_at >= CAST(start_time AS timestamptz)
+    AND inserted_at < CAST(end_time AS timestamptz)
+  GROUP BY
+    1
+  ORDER BY
+    2 DESC
+$$
+LANGUAGE sql
+STABLE;

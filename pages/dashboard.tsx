@@ -65,6 +65,9 @@ export default function Dashboard() {
   const [pageviewsOsCount, setPageviewsOsCount] = useState<
     Array<{ os: string; pageviews: number }>
   >([])
+  const [pageviewsCountryCount, setPageviewsCountryCount] = useState<
+    Array<{ country: string; pageviews: number }>
+  >([])
 
   const chartData = {
     datasets: [
@@ -144,6 +147,20 @@ export default function Dashboard() {
     fetchPageviewsOsCount()
   }, [startDate, endDate])
 
+  useEffect(() => {
+    const fetchPageviewsCountryCount = async () => {
+      const { data } = await supabase.rpc('pageviews_country_count', {
+        start_time: startDate?.startOf('day').toISOString(),
+        end_time: endDate?.endOf('day').toISOString(),
+      })
+      if (data) {
+        setPageviewsCountryCount(data)
+      }
+    }
+
+    fetchPageviewsCountryCount()
+  }, [startDate, endDate])
+
   return (
     <div className="container mx-auto">
       <Head>
@@ -182,7 +199,7 @@ export default function Dashboard() {
         {startDate?.format('ll')} to {endDate?.format('ll')}
       </div>
       <Bar type="bar" data={chartData} options={chartOptions} />
-      <div className="grid grid-cols-3 gap-4 my-4">
+      <div className="grid grid-cols-2 gap-4 my-4">
         <table className="border table-auto">
           <thead>
             <tr>
@@ -215,6 +232,8 @@ export default function Dashboard() {
             ))}
           </tbody>
         </table>
+      </div>
+      <div className="grid grid-cols-2 gap-4 my-4">
         <table className="border table-auto">
           <thead>
             <tr>
@@ -227,6 +246,22 @@ export default function Dashboard() {
               <tr key={index}>
                 <td className="border px-4 py-2">{osCount.os}</td>
                 <td className="border px-4 py-2">{osCount.pageviews}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <table className="border table-auto">
+          <thead>
+            <tr>
+              <th className="border px-4 py-2">Country</th>
+              <th className="border px-4 py-2">Pageviews</th>
+            </tr>
+          </thead>
+          <tbody>
+            {pageviewsCountryCount.map((countryCount, index) => (
+              <tr key={index}>
+                <td className="border px-4 py-2">{countryCount.country}</td>
+                <td className="border px-4 py-2">{countryCount.pageviews}</td>
               </tr>
             ))}
           </tbody>
